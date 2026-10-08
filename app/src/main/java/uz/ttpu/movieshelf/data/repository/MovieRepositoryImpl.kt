@@ -5,14 +5,15 @@ import uz.ttpu.movieshelf.data.local.MovieLocalDataSource
 import uz.ttpu.movieshelf.data.mapper.toDomain
 import uz.ttpu.movieshelf.data.remote.MovieRemoteDataSource
 import uz.ttpu.movieshelf.domain.model.MoviesResult
+import uz.ttpu.movieshelf.domain.repository.MovieRepository
 import java.io.IOException
 
 class MovieRepositoryImpl(
     private val remote: MovieRemoteDataSource,
     private val local: MovieLocalDataSource,
-) {
+) : MovieRepository {
 
-    suspend fun getMovies(): MoviesResult {
+    override suspend fun getMovies(): MoviesResult {
         // Local storage is the single source of truth for favorites
         val favoriteIds = local.getFavoriteIds()
 
@@ -42,7 +43,7 @@ class MovieRepositoryImpl(
         }
     }
 
-    suspend fun toggleFavorite(movieId: Int): Boolean {
+    override suspend fun toggleFavorite(movieId: Int): Boolean {
         val favoriteIds = local.getFavoriteIds()
         val isCurrentlyFavorite = favoriteIds.contains(movieId)
         val newFavoriteState = !isCurrentlyFavorite
